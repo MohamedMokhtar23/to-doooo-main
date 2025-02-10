@@ -166,47 +166,30 @@ function addSubTask(index) {
   subTaskInput.className = "form-control mb-2";
   subTaskInput.placeholder = "Enter sub-task";
 
-  // Create a container div to manage state
-  const inputContainer = document.createElement("div");
-  inputContainer.appendChild(subTaskInput);
-
-  // Flag to prevent duplicate handling
-  let isHandled = false;
-
-  const handleSubTask = () => {
-    if (isHandled) return;
-    isHandled = true;
-
-    const value = subTaskInput.value.trim();
-    if (!value) {
+  const addSubTaskToList = () => {
+    if (!subTaskInput.value.trim()) {
       alert("Subtask cannot be empty!");
-      inputContainer.remove();
+      subTaskInput.remove();
       return;
     }
 
-    // Add subtask and update UI
-    tasks[index].subtasks.push({ text: value, completed: false });
+    tasks[index].subtasks.push({ text: subTaskInput.value, completed: false });
     tasks[index].completed = false;
+
     saveTasks();
     renderTasks();
   };
 
-  // Handle Enter key
-  subTaskInput.addEventListener("keypress", (e) => {
+
+  subTaskInput.addEventListener("keydown", function (e) {
     if (e.key === "Enter") {
-      handleSubTask();
+      e.preventDefault();
+      addSubTaskToList();
     }
   });
 
-  // Handle blur with a slight delay to allow Enter to fire first
-  subTaskInput.addEventListener("blur", () => {
-    setTimeout(handleSubTask, 100);
-  });
-
-  // Add to DOM and focus
-  const subtaskContainer = document.getElementById(`subtasks-${index}`);
-  subtaskContainer.appendChild(inputContainer);
-  subTaskInput.focus(); // This ensures auto-focus works reliably
+  document.getElementById(`subtasks-${index}`).appendChild(subTaskInput);
+  subTaskInput.focus();
 }
 
 function renderSubTasks(index) {
